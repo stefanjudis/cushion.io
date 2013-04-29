@@ -1,0 +1,33 @@
+{
+  "name": "cushion.io",
+  "version": "0.1.0",
+  "description": "Website for Cushion modules",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/stefanjudis/cushion.io.git"
+  },
+  "keywords": [
+    "Cushion"
+  ],
+  "author": "Cushion Core Team",
+  "contributors": [
+    {
+      "name": "André Kussman",
+      "email": "zoddy@zoddy.de",
+      "url": "https://github.com/Zoddy"
+    }, {
+      "name": "Stefan Judis",
+      "email": "stefanjudis@gmail.com",
+      "url": "https://github.com/stefanjudis"
+    }, {
+      "name": "Patrick Venetz",
+      "email": "mail@patrickvenetz.com",
+      "url": "https://github.com/patrickvenetz"
+    }
+  ],
+  "license": "BSD"
+}

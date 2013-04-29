@@ -14,11 +14,13 @@
 
 var fs = require('fs'),
     http = require('http'),
-    md = require("node-markdown").Markdown,
+    md = require('node-markdown').Markdown,
     pagePath = 'pages',
     server;
 
 server = http.createServer(function(req, res) {
+  'use strict';
+
   var page = req.url.replace('.html', '');
 
   fs.readFile(pagePath + page + '/README.md', 'utf-8', function(err, data) {
@@ -31,7 +33,7 @@ server = http.createServer(function(req, res) {
     }
 
     res.writeHead(200, {'Content-Type': 'text/html'});
-    res.write( md(data));
+    res.write(md(data));
     res.end();
   });
 }).listen(8000);

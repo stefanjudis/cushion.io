@@ -30,7 +30,6 @@ server = http.createServer(function(req, res) {
       return
     }
 
-    console.log(data);
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write( md(data));
     res.end();

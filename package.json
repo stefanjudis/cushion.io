@@ -19,15 +19,20 @@
       "name": "André Kussman",
       "email": "zoddy@zoddy.de",
       "url": "https://github.com/Zoddy"
-    }, {
+    },
+    {
       "name": "Stefan Judis",
       "email": "stefanjudis@gmail.com",
       "url": "https://github.com/stefanjudis"
-    }, {
+    },
+    {
       "name": "Patrick Venetz",
       "email": "mail@patrickvenetz.com",
       "url": "https://github.com/patrickvenetz"
     }
   ],
-  "license": "BSD"
+  "license": "BSD",
+  "dependencies": {
+    "node-markdown": "~0.1.1"
+  }
 }

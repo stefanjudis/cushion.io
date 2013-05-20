@@ -1,3 +1,5 @@
+'use strict';
+
 /*
  * cushion
  * https://github.com/Zoddy/cushion
@@ -14,26 +16,19 @@
 
 var fs = require('fs'),
     http = require('http'),
-    md = require('node-markdown').Markdown,
-    pagePath = 'pages',
     server;
 
 server = http.createServer(function(req, res) {
-  'use strict';
-
-  var page = req.url.replace('.html', '');
-
-  fs.readFile(pagePath + page + '/README.md', 'utf-8', function(err, data) {
+  //fs.readFile('dist/index.min.html', function(err, data) {
+  fs.readFile('dist/index.html', function(err, data) {
     // show 404 page
     if (err) {
       console.log(err)
-      //some fance 404 function
-
-      return
     }
 
     res.writeHead(200, {'Content-Type': 'text/html'});
-    res.write(md(data));
+    res.write(data);
     res.end();
   });
 }).listen(8000);
+console.log('Listening to port 8000');

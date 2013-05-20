@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
+
+  <link rel="stylesheet" href="css/normalize.min.css">
+  <link rel="stylesheet" href="css/main.css">
+
+  <!--[if lt IE 9]>
+    <script src="js/vendor/html5-3.6-respond-1.1.0.min.js"></script>
+  <![endif]-->
+  </head>
+  <body>
+    <!--[if lt IE 7]>
+      <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+    <![endif]-->
+
+    <p><img src="https://github.com/downloads/Zoddy/cushion/cushion-page-logo.png" alt="cushion logo"></p>
+<h1>cushion <a href="http://travis-ci.org/Zoddy/cushion"><img src="https://secure.travis-ci.org/Zoddy/cushion.png?branch=master" alt="Build Status"></a> <a href="http://badge.fury.io/js/cushion"><img src="https://badge.fury.io/js/cushion.png" alt="NPM version"></a></h1>
+<p>Node.js CouchDB API</p>
+<h2>connection api</h2>
+<h3>create new connection</h3>
+<p><strong>Description:</strong> Creates a new connection to a CouchDB.</p>
+<pre><code>cushion.Connection();
+cushion.Connection(host);
+cushion.Connection(host, port);
+cushion.Connection(host, port, username);
+cushion.Connection(host, port, username, password);
+cushion.Connection(host, port, username, password, additional);</code></pre>
+<p><strong>host</strong> - host of couchdb instance <strong>[ default: &#39;127.0.0.1&#39; ]</strong><br><strong>port</strong> - port of couchdb instance <strong>[ default: 5984 ]</strong><br><strong>username</strong> - name of couchdb user <strong>[ default: &#39;&#39; ]</strong><br><strong>password</strong> - password for given couchdb user <strong>[ default: &#39;&#39; ]</strong><br><strong>additional</strong> - additional options <strong>[ default: {}]</strong><br><strong>additional.secure</strong> - set to true, if you want to use https requests <strong>[ default: false ]</strong><br><strong>additional.path</strong> - an additional path after ther host and port (e.g. you want to use a proxy) <strong>[ default: &#39;&#39; ]</strong></p>
+<p><strong>Example:</strong></p>
+<pre><code>var cushion = new (require(&#39;cushion&#39;).Connection)(
+                &#39;127.0.0.1&#39;, // host
+                5984, // port
+                &#39;foo&#39;, // username
+                &#39;bar&#39; // password
+              );</code></pre>
+<h3>get or set option</h3>
+<p><strong>Description:</strong> Get or set options.If you set:</p>
+<ul>
+<li>no param: you will get all options</li>
+<li>one param: you will get one particular option</li>
+<li>two params: you will set one particular option</li>
+</ul>
+<pre><code>cushion.option()
+cushion.option(option)
+cuhsion.option(option, value)</code></pre>
+<p><strong>option</strong> - name of an option<br><strong>value</strong> - value of an option  </p>
+<p><strong>Example:</strong></p>
+<pre><code>var host = cushion.option(&#39;host&#39;);</code></pre>
+<h3>get a list of databases</h3>
+<p><strong>Description:</strong> Get an array of database objects.</p>
+<pre><code>cushion.listDatabases(callback)
+cushion.listDatabases(noCouchRelated, callback)</code></pre>
+<p><strong>noCouchRelated</strong> - if you set this to true, you will only get databases, which are user generated (it simply filters all databases that name begins with &#39;_&#39;)<br><strong>callback</strong> - callback function(error, response) for error and response handling  </p>
+<p><strong>Example:</strong></p>
+<pre><code>// getting all databases (couchdb databases included like &quot;_users&quot; or &quot;_replicator&quot;)
+cushion.listDatabases(function(error, response) {
+  console.log(error || response);
+});
+
+// getting no couchdb related databases
+// (couchdb databases excluded like &quot;_users&quot; or &quot;_replicator&quot;)
+cushion.listDatabases(true, function(error, response) {
+  console.log(error || response);
+});</code></pre>
+<h3>get version of couchdb</h3>
+<p><strong>Description:</strong> Get version of connected couchdb.</p>
+<pre><code>cushion.version(callback);</code></pre>
+<p><strong>callback</strong> - callback function(error, response) for error and response handling</p>
+<p><strong>Example:</strong></p>
+<pre><code>cushion.version(function(error, version) {
+  console.log(error || version);
+});</code></pre>
+<h3>configuration</h3>
+<p><strong>Description:</strong> Get or set configuration params. If you set:</p>
+<ul>
+<li>one param: you will get the complete configuration</li>
+<li>two params: you will get all options of the specific section</li>
+<li>three params: you will get the content of the specific option</li>
+<li>four params: you set a specific option to the new value, or you delete the given option, if you set value to null</li>
+</ul>
+<pre><code>cushion.config(callback)
+cushion.config(section, callback)
+cushion.config(section, option, callback)
+cushion.config(section, option, value, callback)</code></pre>
+<p><strong>section</strong> - name of a section (a group of options)<br><strong>option</strong> - name of an option<br><strong>value</strong> - new value for the option: if you set value to null, given option will be deleted<br><strong>callback</strong> - function(error, section<strong>|</strong>option<strong>|</strong>saved) that will be called after getting the informations, or if new value was saved, or if there was an error</p>
+<h3>create admin account</h3>
+<p><strong>Description:</strong> Creates an admin account. That means the config param will be set and the user document created.</p>
+<pre><code>cushion.createAdmin(name, password, callback);</code></pre>
+<p><strong>name</strong> - name of the admin account<br><strong>password</strong> - password of the admin account<br><strong>callback</strong> - function(error, created) that will be called after creating the admin account, or if there was an error</p>
+<h3>delete admin account</h3>
+<p><strong>Description:</strong> Deletes the admin option at the configuration and the user document.</p>
+<pre><code>cushion.deleteAdmin(name, callback);</code></pre>
+<p><strong>name</strong> - name of the admin account<br><strong>callback</strong> - function(error, deleted) that will be called after deleting the admin account, or if there was an error</p>
+<h3>list of active tasks</h3>
+<p><strong>Description:</strong> Returns a list of active tasks.</p>
+<pre><code>cushion.activeTasks(callback);</code></pre>
+<p><strong>callback</strong> - function(error, activeTasks) that will called, after getting the list of active tasks or if there was an error</p>
+<h3>list of generated uuids</h3>
+<p><strong>Description:</strong> Returns a list of couchdb generated uuids.</p>
+<pre><code>cushion.uuids(callback);
+cushion.uuids(count, callback);</code></pre>
+<p><strong>count</strong> - number of uuids to generate <strong>[ default: 1 ]</strong><br><strong>callback</strong> - function(error, uuidList) that will be called, after getting the list of uuids or if there was an error</p>
+<h3>server statistics</h3>
+<p><strong>Description:</strong> Returns server statistics.</p>
+<pre><code>cushion.stats(callback);</code></pre>
+<p><strong>callback</strong> - function(error, stats) that will be called, after getting the statistics of if there was an error</p>
+<h3>get log</h3>
+<p><strong>Description:</strong> Returns the tail of the server&#39;s log file. There&#39;s also another param <code>offset</code> for the request to the couchdb, but it&#39;s not useful, look at the documentation <a href="http://wiki.apache.org/couchdb/HttpGetLog">http://wiki.apache.org/couchdb/HttpGetLog</a>.</p>
+<pre><code>cushion.log(callback);
+cushion.log(bytes, callback);</code></pre>
+<p><strong>bytes</strong> - number of bytes which do you want from the tail <strong>[ default: 1000 ]</strong><br><strong>callback</strong> - function(error, log) that will be called, after getting the log or if there was an error</p>
+<h3>restart server</h3>
+<p><strong>Description:</strong> Restarts the server.</p>
+<pre><code>cushion.restart(callback);</code></pre>
+<p><strong>callback</strong> - function(error, restart) function that will be called, after initializing the restart or if there was an error</p>
+<h3>make a low level request</h3>
+<p><strong>Description:</strong> If there is something cushion doesn&#39;t offer to you, make a low level request to couchdb.</p>
+<pre><code>cushion.request(properties);</code></pre>
+<p><strong>properties.method</strong> - HTTP method, can be GET, PUT, POST, DELETE, HEAD, COPY <strong>[ default: &#39;GET&#39; ]</strong><br><strong>properties.path</strong> - uri path after domain  <strong>[ default: &#39;&#39;]</strong><br><strong>properties.headers</strong> - key/value-pairs of additional http headers<br><strong>properties.body</strong> - additional request body<br><strong>properties.callback</strong> - callback function(error, response, headers) for error and response handling</p>
+<p><strong>Example:</strong></p>
+<pre><code>// getting all documents of given database
+cushion.request({
+  &#39;method&#39;: &#39;GET&#39;,
+  &#39;path&#39;: &#39;foodb/_all_docs&#39;,
+  &#39;callback&#39;: function(error, response, headers) {
+    console.log(error || response);
+  }
+});
+
+// creating a new document
+cushion.request({
+  &#39;method&#39;: &#39;PUT&#39;,
+  &#39;path&#39;: &#39;foodb/foodoc&#39;,
+  &#39;body&#39;: {
+    &#39;name&#39;: &#39;John Doe&#39;
+  },
+  &#39;callback&#39;: function(error, response, headers) {
+    console.log(error || response);
+  }
+});</code></pre>
+<h2>user api</h2>
+<h3>create new user</h3>
+<p><strong>Description</strong> Creates a new user</p>
+<pre><code>user.create(name, password, callback);
+user.create(name, password, roles, callback);</code></pre>
+<p><strong>name</strong> - name of the user<br><strong>password</strong> - password of the user<br><strong>roles</strong> - list of role strings<br><strong>callback</strong> - function(error, created) that will be called after creating the user, or if there was an error</p>
+<p><strong>Example</strong></p>
+<pre><code>// create a new user
+var user = cushion.user();
+
+user.create(&#39;fooUser&#39;, &#39;fooPassword&#39;, function(error, created) {
+  console.log(error || created);
+});
+
+// create a new user with roles
+user.create(
+  &#39;fooUser&#39;,
+  &#39;fooPassword&#39;,
+  [&#39;fooRole&#39;, &#39;barRole&#39;],
+  function(error, created) {
+      console.log(error || created);
+  }
+);</code></pre>
+<h3>add role</h3>
+<p><strong>Description</strong> Adds one or more roles to the user</p>
+<pre><code>user.addRole(name, role, callback);
+user.addRole(name, roles, callback);</code></pre>
+<p><strong>name</strong> - name of the user<br><strong>role</strong> - role to add to the user<br><strong>roles</strong> - list of roles to add to the user<br><strong>callback</strong> - function(error, added) that will be called after adding the role(s), or if there was an error</p>
+<p><strong>Example</strong></p>
+<pre><code>// add one role
+user.addRole(&#39;fooUser&#39;, &#39;fooRole&#39;, function(error, added) {
+  console.log(error || added);
+});
+
+// add two roles
+user.addRole(&#39;fooUser&#39;, [&#39;fooRole&#39;, &#39;barRole&#39;], function(error, added) {
+  console.log(error || added);
+});</code></pre>
+<h3>get roles</h3>
+<p><strong>Description</strong> Get list of roles from the user</p>
+<pre><code>user.getRoles(name, callback);</code></pre>
+<p><strong>name</strong> - name of the user<br><strong>callback</strong> - function(error, roles) that will be called after getting the the list of roles, or if there was an error</p>
+<h3>delete role</h3>
+<p><strong>Description</strong> Deletes one or more roles from the user</p>
+<pre><code>user.deleteRole(name, role, callback);
+user.deleteRole(name, roles, callback);</code></pre>
+<p><strong>name</strong> - name of the user<br><strong>role</strong> - role to delete from the user<br><strong>roles</strong> - list of roles to delete from the user<br><strong>callback</strong> - function(error, deleted) that will be called after deleting the role(s), or if there was an error</p>
+<p><strong>Example</strong></p>
+<pre><code>// delete one role
+user.deleteRole(&#39;fooUser&#39;, &#39;fooRole&#39;, function(error, deleted) {
+  console.log(error || deleted);
+});
+
+// delete two roles
+user.deleteRole(&#39;fooUser&#39;, [&#39;fooRole&#39;, &#39;barRole&#39;], function(error, deleted) {
+  console.log(error || deleted);
+});</code></pre>
+<h3>change password</h3>
+<p><strong>Description</strong> Changes the password of an existing user</p>
+<pre><code>user.password(name, password, callback);</code></pre>
+<p><strong>name</strong> - name of the user<br><strong>password</strong> - password of the user<br><strong>callback</strong> - function(error, changed) that will be called after changing the password, or if there was an error</p>
+<h3>delete user</h3>
+<p><strong>Description</strong> Deletes an user</p>
+<pre><code>user.delete(name, callback);</code></pre>
+<p><strong>name</strong> - name of the user<br><strong>callback</strong> - function(error, deleted) that will be called after deleting the user, or if there was an error</p>
+<h2>database api</h2>
+<h3>connect to a specific database</h3>
+<p><strong>Description:</strong> Connect to a given database.</p>
+<pre><code>cushion.database(name);</code></pre>
+<p><strong>name:</strong> name of the database</p>
+<p><strong>Example:</strong></p>
+<pre><code>var db = cushion.database(&#39;foodb&#39;);</code></pre>
+<h3>check if database exists</h3>
+<p><strong>Description:</strong> Checks if the database exists.</p>
+<pre><code>db.exists(callback);</code></pre>
+<p><strong>callback</strong> - callback function(error, response) for error and response handling</p>
+<p><strong>Example:</strong></p>
+<pre><code>db.exists(function(error, exist) {
+  console.log(error || exist);
+});</code></pre>
+<h3>create database</h3>
+<p><strong>Description:</strong> Create database.</p>
+<pre><code>db.create(callback);</code></pre>
+<p><strong>callback</strong> - callback function(error, response) for error and response handling</p>
+<p><strong>Example:</strong></p>
+<pre><code>db.create(function(error, response) {
+  console.log(error || response);
+});</code></pre>
+<h3>delete database</h3>
+<p><strong>Description:</strong> Delete database.</p>
+<pre><code>db.destroy(callback);</code></pre>
+<p><strong>callback</strong> - callback function(error, response) for error and response handling</p>
+<p><strong>Example:</strong></p>
+<pre><code>db.destroy(function(error, response) {
+  console.log(error || response);
+});</code></pre>
+<h3>get informations about the database</h3>
+<p><strong>Description:</strong> Get whole information about the database.</p>
+<pre><code>db.info(callback);</code></pre>
+<p><strong>callback</strong> - callback function(error, response) for error and response handling</p>
+<p><strong>Example:</strong></p>
+<pre><code>db.info(function(error, info) {
+  console.log(error || info);
+});</code></pre>
+<h3>get name of the database</h3>
+<p><strong>Description:</strong> Get name of the database.</p>
+<p><strong>Example:</strong></p>
+<pre><code>var dbName = db.name();</code></pre>
+<h3>get all documents</h3>
+<p><strong>Description:</strong> The additional options that you can set as first parameter, are the same that you can set at the view function, because the allDocuments function retrieves a special view at the couchdb <code>_all_docs</code>.</p>
+<pre><code>db.allDocuments(callback)
+db.allDocuments(params, callback);</code></pre>
+<p><strong>params</strong> - query parameter object (see description) or callback function(error, response) for error and response handling<br><strong>callback</strong> - callback function(error, response) for error and response handling</p>
+<p><strong>Example:</strong></p>
+<pre><code>// get all documents without parameters
+db.allDocuments(function(error, info, allDocs) {
+  console.log(error || allDocs);
+});
+
+// get all documents with parameters
+var params = { limit: &#39;3&#39;, starkey: &#39;_design/entries&#39; };
+
+db.allDocuments(params, function(error, info, allDocs) {
+  console.log(error || allDocs);
+});</code></pre>
+<h3>retrieving a view</h3>
+<pre><code>db.view(designDocument, viewFunction, callback)
+db.view(designDocument, viewFunction, params, callback)</code></pre>
+<p><strong>designDocument</strong> - name of the design document after the &quot;_design/&quot;<br><strong>viewFunction</strong> - name of the view function<br><strong>params</strong> - additional query params, this are all the query parameters that are documented at the <a href="http://wiki.apache.org/couchdb/HTTP_view_API#Querying_Options">couchdb view api</a><br><strong>callback</strong> - callback function(error, info, rows) for error and response handling</p>
+<pre><code>db.view(
+  &#39;foo&#39;,
+  &#39;bar&#39;,
+  function(error, info, rows) {
+    console.log(error, info, rows);
+  }
+);</code></pre>
+<p><strong>Example (skip first five documents and limits the result to ten):</strong></p>
+<pre><code>db.view(
+  &#39;foo&#39;,
+  &#39;bar&#39;,
+  {&#39;skip&#39;: 5, &#39;limit&#39;: 10},
+  function(error, info, rows) {
+    console.log(error, info, rows);
+  },
+);</code></pre>
+<h3>retrieving a temporary view</h3>
+<p><strong>Description:</strong> Retrieves a temporary view on the database.</p>
+<pre><code>db.temporaryView(map, callback);
+db.temporaryView(map, reduce, callback);
+db.temporaryView(map, params, callback);
+db.temporaryView(map, reduce, params, callback);</code></pre>
+<p><strong>map</strong> - map function as a string and not as a function<br><strong>reduce</strong> - reduce function as a string and not as a function<br><strong>params</strong> - additional query params, this are all the query parameters that are documented at the <a href="http://wiki.apache.org/couchdb/HTTP_view_API#Querying_Options">couchdb view api</a><br><strong>callback</strong> - function(error, info, rows) that will be called, after getting the result or if there was an error</p>
+<p><strong>Example</strong></p>
+<pre><code>// only map function
+db.temporaryView(
+  &#39;function(doc) {emit(doc._id, doc);}&#39;,
+  function(error, info, rows) {
+    console.log(error, info, rows);
+  }
+);
+
+// map function and params
+db.temporaryView(
+  &#39;function(doc) {emit(doc._id, doc);}&#39;,
+  {&#39;skip&#39;: 1, &#39;limit&#39;: 1}
+  function(error, info, rows) {
+    console.log(error, info, rows);
+  }
+);</code></pre>
+<h3>retrieving a list</h3>
+<pre><code>db.list(design, list, view, callback)
+db.list(design, list, view, params, callback)
+db.list(design, list, otherDesign, view, callback)
+db.list(design, list, otherDesign, view, params, callback)</code></pre>
+<p><strong>design</strong> - name of the design document without the &quot;_design/&quot;<br><strong>list</strong> - name of the list function<br><strong>otherDesign</strong> - name of another design document without the &quot;_design/&quot;<br><strong>view</strong> - name of the function<br><strong>params</strong> - additional params, the same that you can set at the view requests<br><strong>callback</strong> - callback function(error, response) for error and response handling</p>
+<p><strong>Example:</strong></p>
+<pre><code>db.list(
+  &#39;fooDesign&#39;,
+  &#39;fooList&#39;,
+  &#39;fooView&#39;,
+  {&#39;skip&#39;: 5, &#39;limit&#39;: 10},
+  function(error, result) {
+      console.log(error || result);
+  }
+);</code></pre>
+<h3>retrieving show</h3>
+<pre><code>db.show(design, show)
+db.show(design, show, params)
+db.show(design, show, documentId)
+db.show(design, show, documentId, params)</code></pre>
+<p><strong>design</strong> - name of the design document without the &quot;_design/&quot;<br><strong>show</strong> - name of the show function<br><strong>documentId</strong> - id of the document, that will be set as param to the show function<br><strong>params</strong> - additional query params as key-value-pairs</p>
+<p><strong>Example:</strong></p>
+<pre><code>db.show(
+  &#39;fooDesign&#39;,
+  &#39;fooShow&#39;,
+  &#39;fooDocument&#39;,
+  {&#39;format&#39;: &#39;xml&#39;},
+  function(error, result) {
+    console.log(error || result);
+  }
+);</code></pre>
+<h3>compaction</h3>
+<pre><code>db.compact(callback)</code></pre>
+<p><strong>callback</strong> - function(error, started) that will be called, after compaction was started or if there was an error</p>
+<h3>cleanup</h3>
+<pre><code>db.cleanup(callback)</code></pre>
+<p><strong>callback</strong> - function(error, started) that will be called, after cleanup was started or if there was an error</p>
+<h3>revision limit</h3>
+<p><strong>Description</strong> Sets or gets the revision limit for documents (default is 1000).</p>
+<pre><code>db.revisionLimit(callback);
+db.revisionLimit(limit, callback);</code></pre>
+<p><strong>limit</strong> - number of the new limit<br><strong>callback</strong> - function(error, limitOrSaved) that will be called after setting the limit (you will get a true as second parameter) or after getting the current limit or if there was an error</p>
+<p><strong>Example:</strong></p>
+<pre><code>// get the current limit
+db.revisionLimit(function(error, limit) {
+  console.log(error || limit);
+});
+
+// set the limit
+db.revision(1500, function(error, saved) {
+  console.log(error || saved);
+});</code></pre>
+<h3>purging</h3>
+<p><strong>Description:</strong> With this you can delete not only the document revision as itself, also the history will be removed. But be careful, purging can have bad side effects, so please look at the <a href="http://wiki.apache.org/couchdb/Purge_Documents">CouchDB Purge Documentation</a>. The second argument <code>purged</code> on the callback give you feedback, which document revision could be purged.</p>
+<pre><code>db.purge(documents, callback);</code></pre>
+<p><strong>documents</strong> - An object with keys that are the document id&#39;s and values that are arrays with revisions of the documents.<br><strong>callback</strong> - function(error, purged) that will be called, after calling the purge command on the couchdb or if there was an error</p>
+<p><strong>Example:</strong></p>
+<pre><code>db.purge(
+  {&#39;foo&#39;: [&#39;34-a663dff69f1c48a25a431e05c31f9c05&#39;]},
+  function(error, purged) {
+    console.log(error || purged);
+  }
+);</code></pre>
+<h3>ensure full commit</h3>
+<p><strong>Description:</strong> Saves all uncommited stuff to the disk.</p>
+<pre><code>db.ensureFullCommit(callback);</code></pre>
+<p><strong>callback</strong> - function(error, success) that will be called, after successfully started the save operation, or if there was an error</p>
+<h2>document api</h2>
+<h3>getting document object</h3>
+<p><strong>Description:</strong> If you set the ID and it will begin with <code>_design/</code>, then you will get a design document object instead of a normal document. Design documents have the same API as normal document plus some extra functions (look at <code>design document api</code>).</p>
+<p><strong>With given ID</strong> <code>var doc = db.document(&#39;foo&#39; [, revision]);</code><br><strong>Without ID</strong> (if you want to create it later from the CouchDB) <code>var doc = db.document();</code></p>
+<h3>load document</h3>
+<pre><code>doc.load(callback)</code></pre>
+<p><strong>callback</strong> - callback function(error, document) for error and response handling</p>
+<h3>get / set content</h3>
+<p><strong>Description:</strong> If you call <code>body</code> without arguments, you will retrieve the whole document content. If you only set one argument, and this argument is a string, you will set the complete body and overwrites all settings before. Otherwise you get the content of the given porperty. If you set 2 or more (you can set how much do you want) it will work as setter. If you set the body and the content argument (the last one) was explicitly set to &#39;undefined&#39;, the property will be deleted.</p>
+<pre><code>doc.body()
+doc.body(obj)
+doc.body(obj, content)
+doc.body(parent, child, content)</code></pre>
+<p><strong>obj</strong> - name of the object<br><strong>content</strong> - new content for <strong>obj</strong><br><strong>child</strong> - child object of <strong>obj</strong></p>
+<h4>Some examples:</h4>
+<pre><code>doc.body({&#39;foo&#39;: &#39;bar&#39;, &#39;456&#39;: 123}) // foo = &#39;bar&#39;; 456 = &#39;123&#39;;
+doc.body(&#39;foo&#39;, &#39;bar&#39;); // foo = &#39;bar&#39;;
+doc.body(&#39;foo&#39;); // -&gt; &#39;bar&#39;
+doc.body(&#39;foo&#39;, &#39;bar&#39;, &#39;baz&#39;); // foo.bar = &#39;baz&#39;;
+doc.body(&#39;foo&#39;, &#39;bar&#39;, &#39;baz&#39;, &#39;foobar&#39;); // foo.bar.baz = &#39;foobar&#39;;
+doc.body(); // foo.bar.baz = &#39;foobar&#39;; 456 = &#39;123&#39;;</code></pre>
+<h3>save document</h3>
+<p><strong>Description:</strong> Saves the document, if document does not exist, it will be created.</p>
+<pre><code>doc.save(callback)</code></pre>
+<p><strong>callback</strong> - callback function(error, document) for error and response handling</p>
+<h3>get info</h3>
+<p><strong>Description:</strong> Gets some info from the document: revision and size of the document.</p>
+<pre><code>doc.info(callback)</code></pre>
+<p><strong>callback</strong> - callback function(error, info) that will called, after retrieving information, or if there was an error</p>
+<h3>copy document</h3>
+<pre><code>doc.copy(targetID, callback)
+doc.copy(targetID, targetRevision, callback)</code></pre>
+<p><strong>targetID</strong> - id of the target document<br><strong>targetRevision</strong> - revision of the target document<br><strong>callback</strong> - callback function(error, sourceDocument, targetDocument) for error and response handling</p>
+<h3>delete document</h3>
+<pre><code>doc.destroy(callback)</code></pre>
+<p><strong>callback</strong> - callback function(error, document) for error and response handling</p>
+<h3>purging</h3>
+<p><strong>Description:</strong> Look for more details at the purge command on database context. In document context this command works as a shortcut. But there&#39;s a difference: The second argument at the callback is only a boolean, that says if the document was purged (true) or not (false).</p>
+<pre><code>doc.purge(callback);
+doc.purge(complete, callback);</code></pre>
+<p><strong>complete</strong> - if you set this to true, it will purge the complete document (it makes a purge on the head revision)<br><strong>callback</strong> - function(error, purged) callback that will be called, if the purge command was done, or if there was an error</p>
+<h2>attachment api</h2>
+<h3>save attachment</h3>
+<p><strong>Description:</strong> Files will always opened as UTF-8.</p>
+<pre><code>doc.saveAttachment(file, contentType, callback)
+doc.saveAttachment(file, contentType, name, callback)</code></pre>
+<p><strong>file</strong> - file path to the file<br><strong>contentType</strong> - content type of the file (like <code>image/png</code>)<br><strong>name</strong> - name of the file it will have at the document. if you don&#39;t set it by yourself, cushion will use the filename instead<br><strong>callback</strong> - function that will be called, after saving the attachment</p>
+<h3>get attachment</h3>
+<pre><code>doc.getAttachment(name, callback)</code></pre>
+<p><strong>name</strong> - attachment name in the document<br><strong>callback</strong> - function that will be called, after the attachment was loaded</p>
+<h3>delete attachment</h3>
+<pre><code>doc.deleteAttachment(name, callback)</code></pre>
+<p><strong>name</strong> - attachment name in the document<br><strong>callback</strong> - function that will be called, after the attachment was deleted</p>
+<h2>design document api</h2>
+<h3>get, create, update or delete views</h3>
+<p><strong>Description:</strong> If you only set one argument, you will get the object with the string representation of the map and reduce functions. If you set <code>map</code> and <code>reduce</code>, you will set a view. If there is no views object in the body, it will be created, so you don&#39;t have to create it by yourself. If you set map explicitly to <code>null</code>, the view will be deleted.</p>
+<pre><code>design.view(name)
+design.view(name, map)
+design.view(name, map, reduce)</code></pre>
+<p><strong>name</strong> - name of the view<br><strong>map</strong> - string representation of the map function<br><strong>reduce</strong> - string representation of the reduce function</p>
+<h3>get, create, update or delete lists</h3>
+<p><strong>Description:</strong> If you only set one argument, you will get the string representation of the list function. If you set the <code>content</code>, it will save to the list. If there is no lists object in the body, it will be created, so you don&#39;t have to create it by yourself. If you set content explicitly to <code>null</code>, the list function will be deleted.</p>
+<pre><code>design.list(name)
+design.list(name, content)</code></pre>
+<p><strong>name</strong> - name of the list<br><strong>content</strong> - string representation of the list function</p>
+<h3>get, create, update or delete shows</h3>
+<p><strong>Description:</strong> If you only set one argument, you will get the string representation of the show function. If you set the <code>content</code>, it will save to the show. If there is no shows object in the body, it will be created, so you don&#39;t have to create it by yourself. If you set content explicitly to <code>null</code>, the show function will be deleted.</p>
+<pre><code>design.show(name)
+design.show(name, content)</code></pre>
+<p><strong>name</strong> - name of the show<br><strong>content</strong> - string representation of the show function</p>
+<h3>getting or setting validation handler</h3>
+<p><strong>Description:</strong> If you set no arguments, you will get the current validation handler, otherwise you will set it and get the design document. Look at the <a href="http://wiki.apache.org/couchdb/Document_Update_Validation">CouchDB Validation Doc Update Documentation</a>.</p>
+<pre><code>design.validateHandler();
+design.validateHandler(handler);</code></pre>
+<p><strong>handler</strong>  string representation of the validation function.</p>
+<p><strong>Example:</strong></p>
+<pre><code>design.validateHandler(
+  &#39;function(newDoc, oldDoc, userCtx, secObj) {&#39; +
+    &#39;if (newDoc.address === undefined) {&#39; +
+      &#39;throw({forbidden: &quot;Document must have an address.&quot;});&#39; +
+    &#39;}&#39; +
+  &#39;}&#39;
+);</code></pre>
+<h3>getting or setting rewrites</h3>
+<p><strong>Description</strong> With this you can set rewrite rules or get the current list of them. If you set no argument, you will get the current list of rewrites. If you set one argument, you will set the new rewrite list.</p>
+<pre><code>design.rewrites()
+design.rewrites(rewrites)</code></pre>
+<p><strong>rewrites</strong> - Array of rewrite rule objects. For further information look at the documentation <a href="http://wiki.apache.org/couchdb/Rewriting_urls">CouchDB Rewriting URLs</a></p>
+<h3>getting view info</h3>
+<pre><code>design.viewInfo(callback)</code></pre>
+<p><strong>callback</strong> - function(error, info) that will be called, after getting the infos or if there was an error</p>
+<p><strong>Example:</strong></p>
+<pre><code>design.viewInfo(function(error, info) {
+  console.log(error || info);
+});</code></pre>
+<h3>compaction</h3>
+<pre><code>design.compact(callback)</code></pre>
+<p><strong>callback</strong> - function(error, started) that will be called, after compaction was started or if there was an error</p>
+<h2>browser version</h2>
+<p>Cushion is also available in the browser. All you have to do is to load the <code>cushion.browser.min.js</code>. The initialization is a little bit different. In this example I use a proxy to connect to the CouchDB. </p>
+<pre><code>var connection = new cushion.Connection(
+  &#39;localhost&#39;, // host
+  8080, // port
+  &#39;zoddy&#39;, // username
+  &#39;zoddy&#39;, // password
+  {&#39;path&#39;: &#39;couchdb&#39;} // so all requests go to localhost:8080/couchdb &lt;- proxy
+);    </code></pre>
+<p>After that all is the same and you have the full power of cushion in the browser.</p>
+<h2>running tests</h2>
+<p>To run the test suite first invoke the following command within the repo, installing the development dependencies:</p>
+<pre><code>$ npm install</code></pre>
+<p>then run the tests:</p>
+<pre><code>$ make test</code></pre>
+<h2>upcoming features</h2>
+<ul>
+<li>session support</li>
+<li>bulk updates</li>
+<li>query params api</li>
+</ul>
+<h2>License</h2>
+<p>(The MIT License)</p>
+<p>Copyright (c) 2009-2012 André Kussmann <a href="&#x6d;&#97;&#105;&#x6c;&#x74;&#x6f;&#x3a;&#122;&#x6f;&#100;&#100;&#x79;&#64;&#x7a;&#x6f;&#x64;&#x64;&#x79;&#46;&#x64;&#x65;">&#122;&#x6f;&#100;&#100;&#x79;&#64;&#x7a;&#x6f;&#x64;&#x64;&#x79;&#46;&#x64;&#x65;</a></p>
+<p>Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+&#39;Software&#39;), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED &#39;AS IS&#39;, WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+<p><img src="https://raw.github.com/stefanjudis/cushion-cli/master/assets/cushion-cli-page-logo.png" alt="cushion logo"></p>
+<p><a href="https://travis-ci.org/stefanjudis/cushion-cli"><img src="https://travis-ci.org/stefanjudis/cushion-cli.png?branch=master" alt="Build Status"></a>
+<a href="http://badge.fury.io/js/cushion-cli"><img src="https://badge.fury.io/js/cushion-cli.png" alt="NPM version"></a>
+<a href="https://gemnasium.com/stefanjudis/cushion-cli"><img src="https://gemnasium.com/stefanjudis/cushion-cli.png" alt="Dependency Status"></a></p>
+<h2>Your are a command line hero. And you like CouchDB. Maybe cushion-cli is something for you.</h2>
+<h3>Command line tool for cushion CouchDB API. It is based on the node.js CouchDB-Api <a href="https://github.com/Zoddy/cushion">Cushion</a>.</h3>
+<h3><a href="https://www.youtube.com/watch?v=w5ppOvKwWC0">Introduction on Youtube</a></h3>
+<h2>Getting Started</h2>
+<p>Install the module with: <code>npm install -g cushion-cli</code></p>
+<p>After that the global <code>cushion</code> command should be available in your terminal. Call it and you will be introduced by the cushion setup for a connection. You will be asked for host, port and if you want to setup a connection as an admin or not. If so you need to enter you admin name and password.</p>
+<h2>General Commands ( not depending on level and usable all the time ):</h2>
+<h3>connection</h3>
+<p><strong>Description:</strong> Switch to connection level.</p>
+<p>No matter at which level you are, you can jump to connection level to use specific commands at this level.</p>
+<p>After switching to connection level there will be a few new connection specific commands. So check them out by only pressing <strong>TAB</strong>.</p>
+<p><strong>Example:</strong></p>
+<pre><code>document ✩ [documentName] ✩ -&gt; connection
+connection ✩ [host] ✩ -&gt;</code></pre>
+<h3>database [databaseName]</h3>
+<p><strong>Description:</strong> Switch to database level.</p>
+<p>Jump to database level with command. If you are at connection level you need to set up a name. That means if you want to set up a new database switch the new name only and call the <code>create</code> command afterwards. If you want to work with an existing one type in database and enter first letter and press <strong>TAB</strong> . </p>
+<p><strong>! This command is supported by auto-completion !</strong></p>
+<p>After switching to database level there will be a few new database specific commands. So check them out by only pressing <strong>TAB</strong>.</p>
+<p>If you are at document level use this command to go back to database level. Alternatively you could use <code>..</code>.</p>
+<p><strong>Examples:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; database [databaseName]
+database ✩ [databaseName] ✩ -&gt;</code></pre>
+<pre><code>document ✩ [documentName] ✩ -&gt; database
+database ✩ [databaseName] ✩ -&gt;</code></pre>
+<h3>exit</h3>
+<p><strong>Description:</strong> Stop cushion and to something else.</p>
+<p><strong>Example:</strong></p>
+<pre><code>conncetion ✩ [host] ✩ -&gt; exit
+Bye bye - happy couching</code></pre>
+<h3>help [command]</h3>
+<p><strong>Description:</strong> Look for help for specific command.</p>
+<p><strong>This command is level specific!</strong> It will only show you the help messages for commands available on your current level (connection, database, document, user). To check which commands are available for some help (if you find something that is missing, <a href="mailto:stefanjudis@gmail.com">please drop me a line</a>) enter <code>help</code>and press <strong>TAB</strong>. </p>
+<p><strong>! This command is supported by auto-completion !</strong></p>
+<p><strong>Example:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; help version
+
+Get version of connected couchdb.
+
+Command:
+    $ version
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<h3>listDatabases</h3>
+<p><strong>Description:</strong> Get list of all databases of current CouchDB connection.</p>
+<p><strong>Example:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; listDatabases
+
+CouchDB includes the following databases:
+
+Response:
+- _replicator
+- _users
+- foo
+- bar
+- baz
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<h3>listUsers</h3>
+<p><strong>Description:</strong> Get list of all users of connected CouchDB.</p>
+<p><strong>Example:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; listUsers
+
+Following users exist:
+
+Response:
+- foo
+- bar
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<h3>user [userName]</h3>
+<p><strong>Description:</strong> Switch to user level.</p>
+<p>Enter a given name for switching either to an existing user or for creating a new one by calling <code>create</code> at user level. To check which users are available to switch to enter <code>user</code>and press <strong>TAB</strong>.</p>
+<p><strong>! This command is supported by auto-completion !</strong></p>
+<p>After switching to user level there will be a few new user specific commands. So check them out by only pressing <strong>TAB</strong>.</p>
+<p><strong>Example:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; user [userName]
+user ✩ [userName] ✩ -&gt;</code></pre>
+<h3>[..]</h3>
+<p><strong>Description:</strong> Switch to parent level.</p>
+<p>If you are at document level you will switch to database level. Database and user level will switch to connection level. Command at connection level will do nothing.</p>
+<p><strong>Example:</strong></p>
+<pre><code>database ✩ [databaseName] ✩ -&gt; ..
+connection ✩ [host] ✩ -&gt;</code></pre>
+<h2>Connection Level Commands ( &quot;connection ✩ [host] ✩ -&gt;&quot; ):</h2>
+<h3>activeTaks</h3>
+<p><strong>Description:</strong> Get list of active tasks.</p>
+<p><strong>Example:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; activeTasks
+
+Response:
+(empty array)
+
+connection ✩ 127.0.0.1 ✩ -&gt;</code></pre>
+<h3>config [section] [option] [value]</h3>
+<p><strong>Description:</strong> Get or set config information.</p>
+<p>The parameters section, option and value are optional. So if you want to retrieve all config information just call <code>config</code> without any parameters. If you want to retrieve config information for a particular section call <code>config [section]</code> and so on. If you want to <strong>set</strong> any config option just set the value as third parameter ( 4th example ).</p>
+<p><strong>! This command is supported by auto-completion for section !</strong></p>
+<p><strong>Examples:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; config
+
+Response:
+httpd_design_handlers:
+  _info:    {couch_httpd_db,   handle_design_info_req}
+  _list:    {couch_httpd_show, handle_view_list_req}
+  …
+  a lot of fancy information here
+  …
+  util_driver_dir:    /opt/local/lib/couchdb/erlang/lib/couch-1.1.1/priv/lib
+  view_index_dir:     /opt/local/var/lib/couchdb
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<pre><code>connection ✩ [host] ✩ -&gt; config stats
+
+Response:
+rate:    1000
+samples: [0, 60, 300, 900]
+
+connection ✩ host ✩ -&gt;</code></pre>
+<pre><code>connection ✩ [host] ✩ -&gt; config stats rate
+
+Response:
+1000
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<pre><code>connection ✩ [host] ✩ -&gt; config ssl port 1000
+
+Response:
+true
+
+connection ✩ [host] ✩ -&gt; config ssl port
+
+Response:
+1000
+
+connection ✩ 127.0.0.1 ✩ -&gt;</code></pre>
+<h3>createAdmin [name] [password]</h3>
+<p><strong>Description:</strong> Create a new admin. You have got the possibilities to do in one step or to run a prompt dialog asking for name and password.</p>
+<p><strong>Examples:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; createAdmin
+What is the name of admin? john
+What is the password for john? fancyPassword
+Admin was created.
+
+Response:
+true
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<pre><code>connection ✩ [host] ✩ -&gt; createAdmin john fancyPassword
+Admin was created.
+
+Response:
+true
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<h3>deleteAdmin [name]</h3>
+<p><strong>Description:</strong> Delete an existing admin. You have got the possibilities to do in one step or to run a prompt dialog asking for admin name.</p>
+<p><strong>Examples:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; deleteAdmin
+What is the name of admin? john
+Admin was deleted.
+
+Response:
+true
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<pre><code>connection ✩ [host] ✩ -&gt; deleteAdmin john
+Admin was deleted.
+
+Response:
+true
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<h3>deleteConnection [name|index]</h3>
+<p><strong>Description:</strong> If you set up a new connection you have the possibility to save the connection for later usage. Additional to that you can save connection by calling the <a href="#saveconnection-name">saveConnection</a> command. To delete useless connection from storage use this command.</p>
+<p><strong>! This command is supported by auto-completion for the connection name !</strong></p>
+<p><strong>Examples:</strong></p>
+<pre><code>Connection file found.
+You have the following saved connections:
+
+(1) local -&gt; 127.0.0.1
+(2) foo -&gt; 127.0.0.1
+…
+a lot of fancy information here
+…
+connection ✩ [host] ✩ -&gt; deleteConnection foo
+
+Connection foo deleted.
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<pre><code>Connection file found.
+You have the following saved connections:
+
+(1) local -&gt; 127.0.0.1
+(2) foo -&gt; 127.0.0.1
+…
+a lot of fancy information here
+…
+connection ✩ [host] ✩ -&gt; deleteConnection 2
+
+Connection foo deleted.
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<h3>listAdmines</h3>
+<p><strong>Description:</strong> Retrieve a list of admins of connected CouchDB.</p>
+<p><strong>Examples:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; listAdmins
+
+Response:
+foo:    -hashed-2e385bfb093b1b122730ad2da7923217c2db2284,eeb71f0578016a523b22271d53595fd8
+bar:    -hashed-a4bc105fc8c0cd4bd09c4233cb987e246d3994bb,f7febdc698f7ef097136a196c2d051d8
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<h3>log [bytes]</h3>
+<p><strong>Description:</strong> Retrieve the tail of the server logs of connected CouchDB. Without set bytes param you will get 1000 Bytes of the tail.</p>
+<p><strong>Examples:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; log
+
+Response:
+T] [info] [&lt;0.23322.8&gt;] 127.0.0.1 - - &#39;GET&#39; /_config 200
+[Tue, 12 Mar 2013 21:58:41 GMT] [info] [&lt;0.31614.8&gt;] 127.0.0.1 - - &#39;GET&#39; / 200
+…
+lot of fancy information here
+…
+[Tue, 12 Mar 2013 22:16:03 GMT] [info] [&lt;0.8336.9&gt;] 127.0.0.1 - - &#39;GET&#39; / 200
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<pre><code>connection ✩ [host] ✩ -&gt; log 32
+
+Response:
+0.1 - - &#39;GET&#39; /_log?bytes=8 200
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<h3>restart</h3>
+<p><strong>Description:</strong> Restart the CouchDB. You have to be logged in as admin to do so.</p>
+<p><strong>Example:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; restart
+
+Response:
+ok: true
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<h3>saveConnection [name]</h3>
+<p><strong>Description:</strong> Save the connection for later usage. </p>
+<p><strong>Example:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; saveConnection foo
+
+Connection foo was saved.
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<h3>showConnection</h3>
+<p><strong>Description:</strong> If you are at a new connection and you forgot what the settings was, this command will give you information about current connection.</p>
+<p><strong>Example:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; showConnection
+
+Your current connection is:
+
+host -&gt; 127.0.0.1
+port -&gt; 5984
+username -&gt; john
+password -&gt; fancyPassword
+secure -&gt; false
+path -&gt; some/path/to/someWhere
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<h3>showConnections</h3>
+<p><strong>Description:</strong> Get a list of all saved connections.</p>
+<p><strong>Example:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; showConnections
+Connection file found.
+You have the following saved connections:
+
+(1) local -&gt; 127.0.0.1
+(2) foo -&gt; someHost
+(3) bar -&gt; anotherHost
+
+connection ✩ host ✩ -&gt;</code></pre>
+<h3>stats</h3>
+<p><strong>Description:</strong> Get server statistics.</p>
+<p><strong>Example:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; stats
+
+Response:
+couchdb:
+  open_databases:
+    description: number of open databases
+    current:     null
+    sum:         null
+    …
+    a lot of fancy information here
+    …
+    min:         null
+    max:         null
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<h3>uuids [numberOfUuids]</h3>
+<p><strong>Description:</strong> Create CouchDB uuids.</p>
+<p><strong>Examples:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; uuids
+
+Response:
+- 4be0aced2a9fba4d4514ceb56e000d6b
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<pre><code>connection ✩ [host] ✩ -&gt; uuids 10
+
+Response:
+- 4be0aced2a9fba4d4514ceb56e001cee
+- 4be0aced2a9fba4d4514ceb56e002286
+- 4be0aced2a9fba4d4514ceb56e003050
+- 4be0aced2a9fba4d4514ceb56e00399e
+- 4be0aced2a9fba4d4514ceb56e003afd
+- 4be0aced2a9fba4d4514ceb56e0045fd
+- 4be0aced2a9fba4d4514ceb56e00510b
+- 4be0aced2a9fba4d4514ceb56e005973
+- 4be0aced2a9fba4d4514ceb56e0067a0
+- 4be0aced2a9fba4d4514ceb56e006be4
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<h3>version</h3>
+<p><strong>Description:</strong> Get version of connected CouchDB.</p>
+<p><strong>Example:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; version
+
+Response:
+1.1.1
+
+connection ✩ [host] ✩ -&gt;</code></pre>
+<h2>Database Level Commands ( &quot;database ✩ [databaseName] ✩ -&gt;&quot; ):</h2>
+<h3>allDesignDocuments</h3>
+<p><strong>Description:</strong> Get a list of all design documents. The representation is without &#39;_design/&#39; at the beginning, because you have to use it at <code>view</code> command without prefix anyway.</p>
+<p><strong>Example:</strong></p>
+<pre><code>database ✩ [databaseName] ✩ -&gt; allDesignDocuments
+This databases includes of 2 design documents.
+
+Response:
+- designFoo
+- designBar
+
+database ✩ [databaseName] ✩ -&gt;</code></pre>
+<h3>allDocuments [param1] [param2] ...</h3>
+<p><strong>Description:</strong> Get a list of all documents given in selected database. Look for all possible param at <a href="http://wiki.apache.org/couchdb/HTTP_Document_API#all_docs">here</a> at query parameters.</p>
+<p><strong>Example:</strong></p>
+<pre><code>database ✩ [databaseName] ✩ -&gt; allDocuments
+This databases exists of 10 documents.
+Displayed result has an offset of 0
+
+Response:
+Doc1:            6-841ea3bec41a1ccbf776591dda80e1f9
+Doc2:            14-f65a9da7700c81a73d23985e7fe286b2
+_design/entries: 2-3b756e80956bb0ddff78dbd9a4468a3e
+Doc3:            19-819e98e81df4c835841e51b83749c918
+…
+
+database ✩ [databaseName] ✩ -&gt;</code></pre>
+<pre><code>database ✩ [databaseName] ✩ -&gt; allDocuments limit=3 startkey=&quot;_design/entries&quot;
+This databases exists of 10 documents.
+Displayed result has an offset of 2
+
+Response:
+_design/entries: 2-3b756e80956bb0ddff78dbd9a4468a3e
+Doc3:            19-819e98e81df4c835841e51b83749c918
+Doc4:            15-04000ead021dacbcf43a8c8969c5b2f1
+
+database ✩ [databaseName] ✩ -&gt;</code></pre>
+<h3>allViews [designName]</h3>
+<p><strong>Description:</strong> Get a list of views for design document.</p>
+<p><strong>! This command is supported by auto-completion for the design name !</strong></p>
+<p><strong>Example:</strong></p>
+<pre><code>database ✩ [databaseName] ✩ -&gt; allViews foo
+This design document includes of 2 views.
+
+Response:
+- viewBar
+- viewBaz
+
+database ✩ [databaseName] ✩ -&gt;</code></pre>
+<h3>cleanup</h3>
+<p><strong>Description:</strong> Start <a href="http://wiki.apache.org/couchdb/HTTP_view_API#View_Cleanup">view cleanup</a> for connected database.</p>
+<p><strong>Example:</strong></p>
+<pre><code>database ✩ [databaseName] ✩ -&gt; cleanup
+
+Response:
+true
+
+database ✩ [databaseName] ✩ -&gt;</code></pre>
+<h3>compact</h3>
+<p><strong>Description:</strong> Start <a href="http://wiki.apache.org/couchdb/Compaction">compaction</a> for connected database.</p>
+<p><strong>Example:</strong></p>
+<pre><code>database ✩ [databaseName] ✩ -&gt; compact
+
+Response:
+true
+
+database ✩ [databaseName] ✩ -&gt;</code></pre>
+<h3>create</h3>
+<p><strong>Description:</strong> Create new database (if not exist) and set it in CouchDB. You need to be at database level to execute this command. </p>
+<p><strong>Example:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; database foo
+
+Switched to database foo
+
+database ✩ foo ✩ -&gt; create
+
+Database created.
+
+database ✩ foo ✩ -&gt; listDatabases
+
+CouchDB includes the following databases:
+
+Response:
+- _replicator
+- _users
+- db1
+- db2
+- foo
+
+database ✩ foo ✩ -&gt;</code></pre>
+<h3>destroy</h3>
+<p><strong>Description:</strong> Delete given database and remove it from CouchDB. Switch to database level of an existing database and call <code>destroy</code>command.</p>
+<p><strong>Example:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; listDatabases
+
+CouchDB includes the following databases:
+
+Response:
+- _replicator
+- _users
+- db1
+- db2
+- foo
+
+connection ✩ [host] ✩ -&gt; database foo
+
+Switched to database foo
+
+database ✩ foo ✩ -&gt; destroy
+
+Database deleted.
+
+Switched to connection level
+
+connection ✩ [host] ✩ -&gt; listDatabases
+
+CouchDB includes the following databases:
+
+Response:
+- _replicator
+- _users
+- db1
+- db2
+
+connection ✩ [host] ✩ -</code></pre>
+<h3>document [docId]</h3>
+<p><strong>Description:</strong> Switch to document level by ID. If you don&#39;t set the ID CouchDB will set it for you later. After switching to document level don&#39;t forget to <code>load</code> given document, if you want to access the data.</p>
+<p><strong>! This command is supported by auto-completion for the document id !</strong></p>
+<p><strong>Example:</strong></p>
+<pre><code>database ✩ [databaseName] ✩ -&gt; document doc1
+
+Switched to document level.
+
+document ✩ doc1 ✩ -&gt;</code></pre>
+<pre><code>database ✩ [databaseName] ✩ -&gt; document
+
+Switched to document level.
+
+document ✩ ... ✩ -&gt;</code></pre>
+<h3>ensureFullCommit</h3>
+<p><strong>Description:</strong> Saves all uncommited stuff to the disk.</p>
+<p><strong>Example:</strong></p>
+<pre><code>database ✩ [databaseName] ✩ -&gt; ensureFullCommit
+
+Response:
+true
+
+database ✩ [databaseName] ✩ -&gt;</code></pre>
+<h3>exists</h3>
+<p><strong>Description:</strong> Check if given database already exists. If not, you can create it. If so, you can delete it.</p>
+<p><strong>Examples:</strong></p>
+<pre><code>atabase ✩ [existingDatabase] ✩ -&gt; exists
+
+Database already exists.
+
+database ✩ [existingDatabase] ✩</code></pre>
+<pre><code>database ✩ [notExistingDatabase] ✩ -&gt; exists
+
+Database doesn&#39;t exist yet.
+
+database ✩ [notExistingDatabase] ✩ -&gt;</code></pre>
+<h3>info</h3>
+<p><strong>Description:</strong> Get information about connected database.</p>
+<p><strong>Example:</strong></p>
+<pre><code>database ✩ [databaseName] ✩ -&gt; info
+
+Response:
+db_name:              foo
+doc_count:            10
+doc_del_count:        7
+update_seq:           149
+purge_seq:            0
+compact_running:      false
+disk_size:            618587
+instance_start_time:  1363201782697759
+disk_format_version:  5
+committed_update_seq: 149
+
+database ✩ [databaseName] ✩ -&gt;</code></pre>
+<h3>tmpView [map] [params|reduce] [reduce]</h3>
+<p><strong>Description:</strong> Retrieve a temporary view for given database.</p>
+<p><strong>Example:</strong></p>
+<pre><code>database ✩ [databaseName] ✩ -&gt; tmpView &#39;function(doc) {emit(doc._id, doc);}&#39;
+This databases exists of 10 document.
+Displayed result has an offset of 0.
+
+
+Response:
+-
+  id:    4be0aced2a9fba4d4514ceb56e007a04
+  key:   4be0aced2a9fba4d4514ceb56e007a04
+  value:
+    _id:  4be0aced2a9fba4d4514ceb56e007a04
+    _rev: 1-967a00dff5e02add41819138abb3284d
+-
+  id:    id1
+  key:   key1
+  value:
+    _id:        id1
+    _rev:       6-841ea3bec41a1ccbf776591dda80e1f9
+    name:       foo
+
+database ✩ [databaseName] ✩ -&gt;</code></pre>
+<pre><code>database ✩ [databaseName] ✩ -&gt; tmpView &#39;function(doc) {emit(doc._id, doc);}&#39; limit=1
+This databases exists of 10 documents.
+Displayed result has an offset of 0.
+
+
+Response:
+-
+  id:    4be0aced2a9fba4d4514ceb56e007a04
+  key:   4be0aced2a9fba4d4514ceb56e007a04
+  value:
+    _id:  4be0aced2a9fba4d4514ceb56e007a04
+    _rev: 1-967a00dff5e02add41819138abb3284d
+
+database ✩ [databaseName] ✩ -&gt;</code></pre>
+<pre><code>database ✩ [databaseName] ✩ -&gt; tmpView &#39;function(doc) {emit(doc._id, doc);}&#39; &#39;function(keys, values, rereduce){return sum()}&#39;
+This databases exists of undefined documents.
+Displayed result has an offset of undefined.
+
+
+Response:
+-
+  key:   null
+  value: 0
+
+database ✩ [databaseName] ✩ -&gt;</code></pre>
+<pre><code>database ✩ [databaseName] ✩ -&gt; tmpView &#39;function(doc) {emit(doc._id, doc);}&#39; limit=1 &#39;function(keys, values, rereduce){return sum()}&#39;
+This databases exists of 10 documents.
+Displayed result has an offset of 0.
+
+
+Response:
+-
+  id:    4be0aced2a9fba4d4514ceb56e007a04
+  key:   4be0aced2a9fba4d4514ceb56e007a04
+  value:
+    _id:  4be0aced2a9fba4d4514ceb56e007a04
+    _rev: 1-967a00dff5e02add41819138abb3284d
+
+database ✩ [databaseName] ✩ -&gt;</code></pre>
+<h3>view [design] [view] [param1] [param2] ...</h3>
+<p><strong>Description:</strong> Retrieve a particular view in design document for given database.</p>
+<p><strong>Example:</strong> </p>
+<pre><code>database ✩ [databaseName] ✩ -&gt; view entries all
+
+This databases exists of 9 documents.
+
+Displayed result has an offset of 0.
+
+Response:
+- id:    document1
+  key:    foo1
+  value:
+    _id:        document1
+    _rev:       6-841ea3bec41a1ccbf776591dda80e1f9
+    bar:        baz
+- id:    document2
+  key:   foo2
+  value:
+    _id:        document1
+    _rev:       6-841ea3bec41a1ccbf776591dda80e1f9
+    bar:       baz
+…
+a lot of fancy information here
+…
+- id:    document5
+  key:   foo5
+  value:
+    _id:        document1
+    _rev:       6-841ea3bec41a1ccbf776591dda80e1f9
+    bar:       baz
+
+database ✩ [databaseName] ✩ -&gt;</code></pre>
+<h2>Document Level Commands ( &quot;document ✩ [documentName] ✩ -&gt;&quot; ):</h2>
+<h3>content [key] [value]</h3>
+<p><strong>Description:</strong> Get or set document body content. Don&#39;t forget to save it with <code>save</code> command later on.</p>
+<p><strong>! This command is supported by auto-completion for the document body key !</strong></p>
+<p><strong>Examples:</strong></p>
+<pre><code>document ✩ [docId] ✩ -&gt; content
+
+Response:
+_id:        docId
+name:       someName
+…
+a lot of fancy information here
+…
+foo:        bar
+
+document ✩ [docId] ✩ -&gt;</code></pre>
+<pre><code>document ✩ [docId] ✩ -&gt; content name
+
+Response:
+someName
+
+document ✩ [docId] ✩ -&gt;</code></pre>
+<pre><code>document ✩ [docId] ✩ -&gt; content name newName
+
+Property set.
+
+document ✩ [docId] ✩ -&gt; content
+
+Response:
+_id:        docId
+name:       newName
+…
+a lot of fancy information here
+…
+foo:        bar
+
+document ✩ [docId] ✩ -&gt;</code></pre>
+<h3>info</h3>
+<p><strong>Description:</strong> Get info about given document.</p>
+<p><strong>Examples:</strong></p>
+<pre><code>document ✩ [docId] ✩ -&gt; info
+
+Response:
+revision: 13-8da00c2e8d7b1a0ddc6db934e48b85a1
+size:     448
+
+document ✩ [docId] ✩ -&gt;</code></pre>
+<h3>load</h3>
+<p><strong>Description:</strong> Load body of particular document. Before that command your document will be empty.</p>
+<p><strong>Example:</strong></p>
+<pre><code>document ✩ [docId] ✩ -&gt; info
+
+Response:
+revision: 13-8da00c2e8d7b1a0ddc6db934e48b85a1
+size:     448
+
+document ✩ [docId] ✩ -&gt;</code></pre>
+<h3>save</h3>
+<p><strong>Description:</strong> Save body of particular document to CouchDB.</p>
+<p><strong>Example:</strong></p>
+<pre><code>document ✩ [docId] ✩ -&gt; save
+
+Document saved.
+
+document ✩ [docId] ✩ -&gt;</code></pre>
+<h2>User Level Commands ( &quot;user ✩ [userName] ✩ -&gt;&quot; ):</h2>
+<h3>addRole [role1] [role2] ...</h3>
+<p><strong>Description:</strong> Add one or more new roles to current user.</p>
+<p><strong>Example:</strong></p>
+<pre><code>user ✩ foo ✩ -&gt; addRole bar
+
+Role(s) were successfully added.
+
+user ✩ foo ✩ -&gt; getRoles
+
+User has the following roles:
+
+Response:
+- bar</code></pre>
+<pre><code>user ✩ foo ✩ -&gt; addRole bar1 bar2 bar3
+
+Role(s) were successfully added.
+
+user ✩ foo ✩ -&gt; getRoles
+
+User has the following roles:
+
+Response:
+- bar1
+- bar2
+- bar3
+
+user ✩ foo ✩ -&gt;</code></pre>
+<h3>create [password]</h3>
+<p><strong>Description:</strong> Create new user. <strong>Password argument optional</strong>. If empty password prompt, will be displayed afterwards.</p>
+<p><strong>Example:</strong></p>
+<pre><code>connection ✩ [host] ✩ -&gt; user foo
+
+Switched to user foo
+
+user ✩ foo ✩ -&gt; create
+What is the passwort for the user? fancyPassword
+
+User was successfully created.
+
+user ✩ foo ✩ -&gt;</code></pre>
+<pre><code>connection ✩ [host] ✩ -&gt; user foo
+
+Switched to user foo
+
+user ✩ foo ✩ -&gt; create fancyPassword
+
+User was successfully created.
+
+user ✩ foo ✩ -&gt;</code></pre>
+<h3>delete</h3>
+<p><strong>Description:</strong> Delete current user. Level will be switched to connection level afterwards.</p>
+<p><strong>Example:</strong></p>
+<pre><code>user ✩ foo ✩ -&gt; delete
+
+User was succesfully deleted.
+
+connection ✩ 127.0.0.1 ✩ -&gt;</code></pre>
+<h3>deleteRole [role]</h3>
+<p><strong>Description:</strong> Delete a particular role of current user.</p>
+<p><strong>! This command is supported by auto-completion for the wished role !</strong></p>
+<p><strong>Example:</strong></p>
+<pre><code>user ✩ foo ✩ -&gt; getRoles
+
+User has the following roles:
+
+Response:
+- bar
+
+user ✩ foo ✩ -&gt; deleteRole bar
+
+Role(s) were successfully deleted.
+
+user ✩ foo ✩ -&gt; getRoles
+
+User has the following roles:
+
+Response:
+(empty array)
+
+user ✩ foo ✩ -&gt;</code></pre>
+<h3>getRoles</h3>
+<p><strong>Description:</strong> Get all roles of current user.</p>
+<p><strong>Example:</strong></p>
+<pre><code>user ✩ foo ✩ -&gt; getRoles
+
+User has the following roles:
+
+Response:
+- bar
+- bar2
+- bar3
+
+user ✩ foo ✩ -&gt;</code></pre>
+<h2>Contributing</h2>
+<p>In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using <a href="https://github.com/cowboy/grunt">grunt</a>.</p>
+<h2>Release History</h2>
+<p>0.2.8 - more tests, minor bug fixes, implementation of check mark for unsaved document changes</p>
+<h2>License</h2>
+<p>Copyright (c) 2013 stefan judis<br>Licensed under the MIT license.</p>
+
+
+    <script src="js/main.js"></script>
+
+    <script>
+      var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+  </body>
+</html>

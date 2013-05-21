@@ -19,11 +19,19 @@ var fs = require('fs'),
     server;
 
 server = http.createServer(function(req, res) {
-  //fs.readFile('dist/index.min.html', function(err, data) {
-  fs.readFile('dist/index.html', function(err, data) {
+  var url = (req.url === '/') ? '/index.html' : req.url,
+      path = 'dist' + url;
+
+  fs.readFile(path, function(err, data) {
     // show 404 page
     if (err) {
-      console.log(err)
+      console.log(err);
+
+      res.writeHead(404, {'Content-Type': 'text/html'});
+      res.write('soorrrrryyyyy.');
+      res.end();
+
+      return;
     }
 
     res.writeHead(200, {'Content-Type': 'text/html'});

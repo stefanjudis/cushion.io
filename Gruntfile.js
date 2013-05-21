@@ -12,7 +12,7 @@ module.exports = function(grunt) {
         files: [
           {
             src: ['**'],
-            dest: 'dist/vendor/css/',
+            dest: 'dist/css/vendor/',
             filter: 'isFile',
             expand: true,
             cwd: 'assets/vendor/',
@@ -123,13 +123,22 @@ module.exports = function(grunt) {
       scripts: {
         files: [
           './*.js',
-          './js/**/*.js'
+          './assets/js/**/*.js'
         ],
-        tasks: ['default'],
+        tasks: ['scripts'],
         options: {
           nospawn: true,
         }
       },
+      html: {
+        files: [
+          './assets/html/**/*.html'
+        ],
+        tasks: ['html'],
+        options: {
+          nospawn: true
+        }
+      }
     }
   });
 
@@ -144,4 +153,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['jshint', 'md2html', 'htmlmin', 'copy']);
   grunt.registerTask('dist', ['md2html', 'htmlmin', 'copy']);
+
+  grunt.registerTask('html', ['md2html', 'htmlmin']);
+  grunt.registerTask('scripts', ['jshint']);
 };

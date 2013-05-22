@@ -31,13 +31,13 @@ main {
     }
 
     &:before {
-      left: 1em;
+      left: 2em;
 
       @include rotate(-2deg);
     }
 
     &:after {
-      right: 1em;
+      right: 2em;
 
       @include rotate(2deg);
     }

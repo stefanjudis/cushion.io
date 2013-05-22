@@ -146,20 +146,43 @@ module.exports = function(grunt) {
       readmes: {
         options: {
           gfm: true,
-          layout: 'assets/html/index.html',
+          layout: 'assets/html/section.html',
           sanitize: false,
           separator: '</section><section>'
         },
         files: [{
-          src: [
-            'pages/cushion/Readme.md',
-            'pages/cushion-cli/Readme.md'
-          ],
-          dest: 'dist/index.html'
+          dest: 'dist/',
+          expand: true,
+          ext: '.html',
+          src: Config.src.map(
+            function(src) {
+              return src.path + 'Readme.md';
+            }
+          )
         }]
       }
     },
 
+    // grunt-contrib-uglify
+    uglify: {
+      options: {
+        report: 'gzip'
+      },
+      dev: {
+        options: {
+          mangle: false,
+          compress: false
+        },
+        files: {
+          'dist/js/main.js': ['assets/js/main.js']
+        }
+      },
+      dist: {
+        options: {
+
+        }
+      }
+    },
 
     // grunt-contrib-watch
     watch: {
@@ -194,9 +217,11 @@ module.exports = function(grunt) {
   // basic
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-concat');
 
   // js
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
 
   // html
   grunt.loadNpmTasks('grunt-contrib-htmlmin');
@@ -207,10 +232,50 @@ module.exports = function(grunt) {
   // markdown
   grunt.loadNpmTasks('grunt-md2html');
 
-  grunt.registerTask('default', ['jshint', 'md2html', 'htmlmin', 'copy']);
-  grunt.registerTask('dist', ['md2html', 'htmlmin', 'copy', 'compass:dist']);
+  grunt.registerTask(
+    'renderReadmeHtml',
+    'Generate index.html depending on configuration',
+    function() {
+      var src = Config.src,
+          i = 0;
 
-  grunt.registerTask('html', ['md2html', 'htmlmin']);
-  grunt.registerTask('scripts', ['jshint']);
+      for (i; i < src.length; i++) {
+        grunt.file.write(
+          './dist/' + src[i].path + 'Readme.html',
+          grunt.template.process(
+            grunt.file.read('./dist/' + src[i].path + 'Readme.html'),
+            { data: src[i] }
+          )
+        );
+
+        grunt.log.writeln('Generated new "./dist/' + src[i].path + 'Readme.html"');
+      }
+    }
+  );
+
+  grunt.registerTask(
+    'renderIndexHtml',
+    'Generate index.html depending on configuration',
+    function() {
+      grunt.file.write(
+        './dist/index.html',
+        grunt.template.process(
+          grunt.file.read('./assets/html/index.html'),
+          { data: { readme: grunt.file.read('./dist/readmes.html') } }
+        )
+      );
+
+      grunt.log.writeln('Generated new completed "./dist/index.html."');
+    }
+  );
+
+  grunt.registerTask('default', ['jshint', 'markdown', 'htmlmin', 'copy']);
+  grunt.registerTask('dist', ['markdown', 'htmlmin', 'copy', 'compass:dist']);
+
+  // whole markdown process
+  grunt.registerTask('markdown', ['md2html', 'renderReadmeHtml', 'concat:readme', 'renderIndexHtml']);
+
+  grunt.registerTask('html', ['markdown', 'htmlmin']);
+  grunt.registerTask('scripts', ['jshint', 'uglify']);
   grunt.registerTask('css',['compass']);
 };

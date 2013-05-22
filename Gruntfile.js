@@ -34,6 +34,20 @@ module.exports = function(grunt) {
       }
     },
 
+
+    // grunt-contrib-concat
+    concat: {
+      readme: {
+        src: Config.src.map(
+          function(src) {
+            return './dist/' + src.path + 'Readme.html';
+          }
+        ),
+        dest: './dist/readmes.html'
+      }
+    },
+
+
     // grunt-contrib-copy
     copy: {
       css: {

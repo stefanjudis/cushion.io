@@ -1,6 +1,18 @@
 'use strict';
 
 module.exports = function(grunt) {
+  var Config = {
+    src: [
+      {
+        id: 'cushion',
+        path: 'pages/cushion/',
+      }, {
+        id: 'cushion-cli',
+        path: 'pages/cushion-cli/'
+      }
+    ]
+  };
+
 
   // Project configuration.
   grunt.initConfig({

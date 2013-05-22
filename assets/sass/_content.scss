@@ -4,9 +4,47 @@ body {
 }
 
 main {
+  max-width: 1000px;
   padding: 3em 0 0 2%;
 
+  pre {
+    position: relative;
+
+    padding: 1em;
+
+    background-color: #fff;
+    border: 1px solid #eee;
+
+    &:before, &:after {
+      content: '';
+
+      position: absolute;
+
+      bottom: 10px;
+
+      width: 50%;
+      height: 30%;
+
+      z-index: -1;
+
+      @include box-shadow(0 0 35px #000);
+    }
+
+    &:before {
+      left: 1em;
+
+      @include rotate(-2deg);
+    }
+
+    &:after {
+      right: 1em;
+
+      @include rotate(2deg);
+    }
+  }
+
   section {
+    padding-top: 2em;
     display: none;
 
     &.active {

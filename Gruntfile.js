@@ -6,6 +6,22 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
+    compass: {                  // Task
+      dist: {                   // Target
+        options: {              // Target options
+          sassDir: './assets/sass',
+          cssDir: './dist/css',
+          environment: 'production'
+        }
+      },
+      dev: {                    // Another target
+        options: {
+          sassDir: './assets/sass',
+          cssDir: './dist/css'
+        }
+      }
+    },
+
     // grunt-contrib-copy
     copy: {
       css: {
@@ -138,22 +154,36 @@ module.exports = function(grunt) {
         options: {
           nospawn: true
         }
+      },
+      styles:{
+        files: [
+          './assets/sass/**/*.scss'
+        ],
+        tasks: ['compass:dev']
       }
     }
   });
 
-
-  // official grunt tasks
-  grunt.loadNpmTasks('grunt-contrib-jshint');
+  // basic
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-htmlmin');
   grunt.loadNpmTasks('grunt-contrib-copy');
 
+  // js
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+
+  // html
+  grunt.loadNpmTasks('grunt-contrib-htmlmin');
+
+  // css
+  grunt.loadNpmTasks('grunt-contrib-compass');
+
+  // markdown
   grunt.loadNpmTasks('grunt-md2html');
 
   grunt.registerTask('default', ['jshint', 'md2html', 'htmlmin', 'copy']);
-  grunt.registerTask('dist', ['md2html', 'htmlmin', 'copy']);
+  grunt.registerTask('dist', ['md2html', 'htmlmin', 'copy', 'compass:dist']);
 
   grunt.registerTask('html', ['md2html', 'htmlmin']);
   grunt.registerTask('scripts', ['jshint']);
+  grunt.registerTask('css',['compass']);
 };

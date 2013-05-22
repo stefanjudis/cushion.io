@@ -24,6 +24,10 @@ server = http.createServer(function(req, res) {
       urlSplit = url.split('.'),
       contentType = urlSplit[urlSplit.length - 1] || 'html';
 
+  if (contentType === 'js') {
+    contentType = 'javascript';
+  }
+
   fs.readFile(path, function(err, data) {
     // show 404 page
     if (err) {

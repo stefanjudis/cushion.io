@@ -121,7 +121,8 @@ module.exports = function(grunt) {
         options: {
           gfm: true,
           layout: 'assets/html/index.html',
-          sanitize: false
+          sanitize: false,
+          separator: '</section><section>'
         },
         files: [{
           src: [

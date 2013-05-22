@@ -1,13 +1,23 @@
-@include keyframes(menu) {
+@include keyframes(menuItem) {
   0% {
     background-color: transparent;
     box-shadow: none;
-    color: #fff;
   }
 
   100% {
     background-color: #fff;
-    box-shadow: 0 0 1em #000;
-    color: $darkBrown;
+    box-shadow: 0 0 0.5em #000;
   }
 }
+
+@include keyframes(menuLink) {
+  0% {
+    color: #fff;
+  }
+
+  100% {
+    color: $cushionDarkGreen;
+  }
+}
+
+

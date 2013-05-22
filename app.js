@@ -20,7 +20,9 @@ var fs = require('fs'),
 
 server = http.createServer(function(req, res) {
   var url = (req.url === '/') ? '/index.html' : req.url,
-      path = 'dist' + url;
+      path = 'dist' + url,
+      urlSplit = url.split('.'),
+      contentType = urlSplit[urlSplit.length - 1] || 'html';
 
   fs.readFile(path, function(err, data) {
     // show 404 page
@@ -34,7 +36,7 @@ server = http.createServer(function(req, res) {
       return;
     }
 
-    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.writeHead(200, {'Content-Type': 'text/' + contentType});
     res.write(data);
     res.end();
   });

@@ -1,0 +1,49 @@
+nav {
+  background-color: rgba(66, 59, 53, 0.9);
+  border-radius: 0 0 0.5em 0.5em;
+  box-shadow: 0 0 0.5em #000;
+  color: #fff;
+  height: 1.25em;
+  left: 1%;
+  position: fixed;
+  top: 0;
+  width: 98%;
+
+  ul {
+    list-style-type: none;
+
+    margin: 0;
+
+    padding: 0;
+  }
+
+  li {
+    border-radius: 0 0 0.5em 0.5em;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    float: left;
+
+    font-size: 0.75em;
+    font-weight: bold;
+
+    height: 1.5em;
+
+    margin: 0 1.5em 0 0;
+    padding: 0.25em 1em;
+
+
+    // home link
+    &:first-child {
+      margin: 0 6em 0 0.5em;
+    }
+
+    &:hover {
+      @include animation(menu, 0.2s);
+
+      background-color: #fff;
+      box-shadow: 0 0 1em #000;
+      color: $darkBrown;
+    }
+  }
+}

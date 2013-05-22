@@ -1,0 +1,13 @@
+@include keyframes(menu) {
+  0% {
+    background-color: transparent;
+    box-shadow: none;
+    color: #fff;
+  }
+
+  100% {
+    background-color: #fff;
+    box-shadow: 0 0 1em #000;
+    color: $darkBrown;
+  }
+}

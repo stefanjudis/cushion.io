@@ -9,7 +9,7 @@ main {
   section {
     display: none;
 
-    &:first-child {
+    &.active {
       display: block;
     }
   }

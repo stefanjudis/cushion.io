@@ -19,7 +19,7 @@ var fs = require('fs'),
     server;
 
 server = http.createServer(function(req, res) {
-  var url = (req.url === '/') ? '/index.html' : req.url,
+  var url = (req.url === '/') ? '/index.min.html' : req.url,
       path = 'dist' + url,
       urlSplit = url.split('.'),
       contentType = urlSplit[urlSplit.length - 1] || 'html';

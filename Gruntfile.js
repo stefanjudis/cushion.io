@@ -145,9 +145,7 @@ module.exports = function(grunt) {
     md2html: {
       readmes: {
         options: {
-          gfm: true,
           layout: 'assets/html/section.html',
-          sanitize: false,
           separator: '</section><section>'
         },
         files: [{

@@ -1,4 +1,4 @@
-;(function(document) {
+!function(document) {
   function navigationClickHandler() {
     var i = 0,
         id = this.href.split('#')[1],
@@ -27,4 +27,4 @@
       false
     );
   }
-})(document);
+}(document);

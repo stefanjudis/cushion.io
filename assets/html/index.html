@@ -19,8 +19,9 @@
       <nav>
         <ul>
           <li><a href="#home">Home</a>
-          <li><a href="#cushion">cushion</a>
-          <li><a href="#cushion-cli">cushion-cli</a>
+          <% _.each(src, function(page) { %>
+            <li><a href="#<%= page.id %>"><%= page.id %></a>
+          <% }); %>"
         </ul>
       </nav>
     </header>

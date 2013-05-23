@@ -256,7 +256,8 @@ module.exports = function(grunt) {
           { data: {
         readme: grunt.file.read('./dist/readmes.html'),
         script: grunt.file.read('./dist/js/main.js'),
-        style: grunt.file.read('./dist/css/main.css')
+        style: grunt.file.read('./dist/css/main.css'),
+        src: Config.src
       } }
         )
       );
@@ -265,9 +266,9 @@ module.exports = function(grunt) {
       grunt.log.writeln('Deleted file: "./dist/readmes.html');
 
       grunt.log.writeln('Generated new File: "./dist/index.html"');
-      grunt.log.writeln('  Including File: "./dist/readmes.html"');
-      grunt.log.writeln('  Including File: "./dist/js/main.js"');
-      grunt.log.writeln('  Including File: "./dist/css/main.css"');
+      grunt.log.writeln('  Included File: "./dist/readmes.html"');
+      grunt.log.writeln('  Included File: "./dist/js/main.js"');
+      grunt.log.writeln('  Included File: "./dist/css/main.css"');
     }
   );
 

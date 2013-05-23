@@ -122,7 +122,7 @@ module.exports = function(grunt) {
           removeOptionalTags: true
         },
         files: {
-          'dist/index.min.html': 'dist/index.html'
+          'dist/index.html': 'dist/index.html'
         }
       }
     },

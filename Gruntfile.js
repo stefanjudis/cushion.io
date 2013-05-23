@@ -269,7 +269,7 @@ module.exports = function(grunt) {
     }
   );
 
-  grunt.registerTask('default', ['jshint', 'markdown', 'htmlmin', 'copy']);
+  grunt.registerTask('default', ['jshint', 'uglify', 'markdown', 'htmlmin', 'copy', 'css']);
   grunt.registerTask('dist', ['markdown', 'htmlmin', 'copy', 'compass:dist']);
 
   // whole markdown process

@@ -18,18 +18,21 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
-    compass: {                  // Task
-      dist: {                   // Target
-        options: {              // Target options
-          sassDir: './assets/sass',
-          cssDir: './dist/css',
-          environment: 'production'
-        }
-      },
-      dev: {                    // Another target
+
+    // // grunt-contrib-clean
+    clean: {
+      build: ['./dist/js', './dist/css', './dist/pages']
+    },
+
+
+    // grunt-contrib-compass
+    compass: {
+      dist: {
         options: {
-          sassDir: './assets/sass',
-          cssDir: './dist/css'
+          cssDir: './dist/css',
+          environment: 'production',
+          outputStyle: 'compressed',
+          sassDir: './assets/sass'
         }
       }
     },
@@ -44,22 +47,6 @@ module.exports = function(grunt) {
           }
         ),
         dest: './dist/readmes.html'
-      }
-    },
-
-
-    // grunt-contrib-copy
-    copy: {
-      css: {
-        files: [
-          {
-            src: ['**'],
-            dest: 'dist/css/vendor/',
-            filter: 'isFile',
-            expand: true,
-            cwd: 'assets/vendor/',
-          }
-        ]
       }
     },
 

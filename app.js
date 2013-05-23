@@ -16,33 +16,30 @@
 
 var fs = require('fs'),
     http = require('http'),
+    indexPath = __dirname + '/dist/index.html',
+    favIcon = fs.readFileSync(__dirname + '/assets/images/favicon.ico'),
+    port = 8000,
     server;
 
-server = http.createServer(function(req, res) {
-  var url = (req.url === '/') ? '/index.html' : req.url,
-      path = 'dist' + url,
-      urlSplit = url.split('.'),
-      contentType = urlSplit[urlSplit.length - 1] || 'html';
+server = http.createServer(function(request, response) {
+  console.log('request to:', request.url);
 
-  if (contentType === 'js') {
-    contentType = 'javascript';
+  if (request.url === '/favicon.ico') {
+    response.writeHead(200, {'Content-Type': 'image/x-icon'});
+    response.end(favIcon);
+  } else {
+    fs.readFile(indexPath, 'utf-8', function(error, data) {
+      if (error) {
+        console.log(error);
+
+        response.writeHead(404, {'Content-Type': 'text/plain'});
+        response.end('soorrrrryyyyy.', 'utf-8');
+      } else {
+        response.writeHead(200, {'Content-Type': 'text/html'});
+        response.end(data, 'utf-8');
+      }
+    });
   }
-
-  fs.readFile(path, function(err, data) {
-    // show 404 page
-    if (err) {
-      console.log(err);
-
-      res.writeHead(404, {'Content-Type': 'text/html'});
-      res.write('soorrrrryyyyy.');
-      res.end();
-
-      return;
-    }
-
-    res.writeHead(200, {'Content-Type': 'text/' + contentType});
-    res.write(data);
-    res.end();
-  });
-}).listen(8000);
-console.log('Listening to port 8000');
+}).listen(port, function() {
+  console.log('Listening to port ' + port);
+});

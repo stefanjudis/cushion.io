@@ -1,6 +1,6 @@
 [submodule "pages/cushion"]
 	path = pages/cushion
-	url = https://github.com/Zoddy/cushion
+	url = https://stefanjudis@github.com/Zoddy/cushion.git
 [submodule "pages/cushion-cli"]
 	path = pages/cushion-cli
-	url = https://github.com/stefanjudis/cushion-cli
+	url = https://stefanjudis@github.com/stefanjudis/cushion-cli.git

@@ -164,7 +164,11 @@ module.exports = function(grunt) {
       },
       dist: {
         options: {
-
+          mangle: true,
+          compress: true
+        },
+        files: {
+          'dist/js/main.min.js': ['assets/js/main.js']
         }
       }
     },
@@ -176,7 +180,7 @@ module.exports = function(grunt) {
           './*.js',
           './assets/js/**/*.js'
         ],
-        tasks: ['scripts'],
+        tasks: ['default'],
         options: {
           nospawn: true,
         }
@@ -185,7 +189,7 @@ module.exports = function(grunt) {
         files: [
           './assets/html/**/*.html'
         ],
-        tasks: ['html'],
+        tasks: ['default'],
         options: {
           nospawn: true
         }
@@ -194,15 +198,18 @@ module.exports = function(grunt) {
         files: [
           './assets/sass/**/*.scss'
         ],
-        tasks: ['compass:dev']
+        tasks: ['default'],
+        options: {
+          nospawn: true
+        }
       }
     }
   });
 
   // basic
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-clean');
 
   // js
   grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -233,7 +240,7 @@ module.exports = function(grunt) {
           )
         );
 
-        grunt.log.writeln('Generated new "./dist/' + src[i].path + 'Readme.html"');
+        grunt.log.writeln('Generated file: "./dist/' + src[i].path + 'Readme.html"');
       }
     }
   );
@@ -246,21 +253,31 @@ module.exports = function(grunt) {
         './dist/index.html',
         grunt.template.process(
           grunt.file.read('./assets/html/index.html'),
-          { data: { readme: grunt.file.read('./dist/readmes.html') } }
+          { data: {
+        readme: grunt.file.read('./dist/readmes.html'),
+        script: grunt.file.read('./dist/js/main.js'),
+        style: grunt.file.read('./dist/css/main.css')
+      } }
         )
       );
 
-      grunt.log.writeln('Generated new completed "./dist/index.html."');
+      grunt.file.delete('./dist/readmes.html');
+      grunt.log.writeln('Deleted file: "./dist/readmes.html');
+
+      grunt.log.writeln('Generated new File: "./dist/index.html"');
+      grunt.log.writeln('  Including File: "./dist/readmes.html"');
+      grunt.log.writeln('  Including File: "./dist/js/main.js"');
+      grunt.log.writeln('  Including File: "./dist/css/main.css"');
     }
   );
 
-  grunt.registerTask('default', ['jshint', 'uglify', 'markdown', 'htmlmin', 'copy', 'css']);
-  grunt.registerTask('dist', ['markdown', 'htmlmin', 'copy', 'compass:dist']);
 
   // whole markdown process
-  grunt.registerTask('markdown', ['md2html', 'renderReadmeHtml', 'concat:readme', 'renderIndexHtml']);
+  grunt.registerTask('markdown', ['md2html', 'renderReadmeHtml', 'concat:readme']);
 
-  grunt.registerTask('html', ['markdown', 'htmlmin']);
+  grunt.registerTask('default', ['markdown', 'scripts', 'css', 'renderIndexHtml', 'htmlmin', 'clean:build']);
+
   grunt.registerTask('scripts', ['jshint', 'uglify']);
+
   grunt.registerTask('css',['compass']);
 };
